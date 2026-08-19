@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environments
+venv/
+.venv/
+
+# Environment files
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+
+# Local DB files
+database/*.db
+database/*.sqlite
+database/*.sqlite3
+
+# Uploaded evidence and generated outputs
+uploads/*
+reports/*
+
+# Keep empty directories in git
+!uploads/.gitkeep
+!reports/.gitkeep
+
