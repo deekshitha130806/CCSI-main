@@ -1,0 +1,150 @@
+:root {
+  --cyan: #26e6ff;
+  --ok: #5be38a;
+  --warn: #ff4d4d;
+  --muted: rgba(232, 240, 255, 0.66);
+}
+
+.page-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filters {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.input,
+.select {
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(232, 240, 255, 0.86);
+  padding: 0 12px;
+  outline: none;
+}
+.select {
+  padding-right: 10px;
+}
+.input:focus,
+.select:focus {
+  border-color: rgba(38, 230, 255, 0.18);
+  box-shadow: 0 0 0 4px rgba(38, 230, 255, 0.06);
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-ghost {
+  height: 40px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 14px;
+  text-decoration: none;
+  font-weight: 800;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+.btn-primary {
+  color: rgba(232, 240, 255, 0.92);
+  border-color: rgba(38, 230, 255, 0.25);
+  background: linear-gradient(135deg, rgba(38, 230, 255, 0.18), rgba(42, 118, 255, 0.16));
+}
+.btn-secondary {
+  color: rgba(232, 240, 255, 0.82);
+  background: rgba(255, 255, 255, 0.03);
+}
+.btn-ghost {
+  color: rgba(232, 240, 255, 0.66);
+  background: transparent;
+}
+
+.cards-4 {
+  grid-template-columns: repeat(4, minmax(160px, 1fr));
+}
+@media (max-width: 1100px) {
+  .cards-4 {
+    grid-template-columns: repeat(2, minmax(160px, 1fr));
+  }
+}
+
+.table-wrap {
+  width: 100%;
+  overflow: auto;
+}
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.table th,
+.table td {
+  padding: 10px 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  vertical-align: middle;
+}
+.table th {
+  text-align: left;
+  color: rgba(232, 240, 255, 0.72);
+  font-weight: 900;
+}
+.right {
+  text-align: right;
+  white-space: nowrap;
+}
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+}
+.empty {
+  color: rgba(232, 240, 255, 0.58);
+  padding: 18px 10px;
+  text-align: center;
+}
+
+.a {
+  color: rgba(38, 230, 255, 0.85);
+  text-decoration: none;
+  margin-left: 10px;
+  font-weight: 800;
+}
+.a:hover {
+  text-decoration: underline;
+}
+.inline {
+  display: inline;
+}
+.link-danger {
+  margin-left: 10px;
+  border: none;
+  background: transparent;
+  color: rgba(255, 77, 77, 0.92);
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  color: rgba(232, 240, 255, 0.78);
+  font-size: 11px;
+  font-weight: 900;
+}
+.badge.pri.low { border-color: rgba(255,255,255,0.10); }
+.badge.pri.medium { border-color: rgba(38,230,255,0.22); color: rgba(38,230,255,0.92); }
+.badge.pri.high { border-color: rgba(255,77,77,0.22); color: rgba(255,77,77,0.92); }
+.badge.pri.critical { border-color: rgba(255,77,77,0.35); color: rgba(255,77,77,0.98); }
+
+.badge.st.open { border-color: rgba(38,230,255,0.22); color: rgba(38,230,255,0.92); }
+.badge.st.under-investigation { border-color: rgba(42,118,255,0.22); color: rgba(232,240,255,0.86); }
+.badge.st.pending { border-color: rgba(255,255,255,0.14); color: rgba(232,240,255,0.72); }
+.badge.st.closed { border-color: rgba(91,227,138,0.22); color: rgba(91,227,138,0.95); }
+

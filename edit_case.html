@@ -1,0 +1,37 @@
+{% extends "_app_base.html" %}
+{% set page_title = "CCSI • Edit Case" %}
+{% set active_nav = "cases" %}
+{% set extra_css = ["css/cases.css", "css/forms.css"] %}
+
+{% block page_h1 %}Edit Case{% endblock %}
+{% block page_sub %}{{ case.case_id }}{% endblock %}
+
+{% block content %}
+  <div class="panel">
+    <div class="panel-body">
+      <form class="form-grid" method="POST" action="{{ url_for('case_update', case_id=case.case_id) }}">
+        <div class="form-row"><label>Case ID</label><input value="{{ case.case_id }}" readonly /></div>
+        <div class="form-row"><label>Case Title *</label><input name="case_title" value="{{ case.case_title }}" required /></div>
+        <div class="form-row">
+          <label>Crime Type *</label>
+          <select name="crime_type" required>{% for ct in crime_types %}<option value="{{ ct }}" {% if ct==case.crime_type %}selected{% endif %}>{{ ct }}</option>{% endfor %}</select>
+        </div>
+        <div class="form-row"><label>Date *</label><input type="date" name="case_date" value="{{ case.case_date }}" required /></div>
+        <div class="form-row"><label>Location *</label><input name="location" value="{{ case.location }}" required /></div>
+        <div class="form-row"><label>Description *</label><textarea name="description" rows="4" required>{{ case.description }}</textarea></div>
+        <div class="form-row">
+          <label>Priority *</label>
+          <select name="priority" required>{% for p in priorities %}<option value="{{ p }}" {% if p==case.priority %}selected{% endif %}>{{ p }}</option>{% endfor %}</select>
+        </div>
+        <div class="form-row">
+          <label>Status *</label>
+          <select name="status" required>{% for s in statuses %}<option value="{{ s }}" {% if s==case.status %}selected{% endif %}>{{ s }}</option>{% endfor %}</select>
+        </div>
+        <div class="form-actions">
+          <button class="btn-primary" type="submit">Update Case</button>
+          <a class="btn-ghost" href="{{ url_for('case_details', case_id=case.case_id) }}">Cancel</a>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

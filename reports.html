@@ -1,0 +1,34 @@
+{% extends "_app_base.html" %}
+{% set page_title = "CCSI • Reports" %}
+{% set active_nav = "reports" %}
+{% set extra_css = ["css/cases.css", "css/forms.css"] %}
+
+{% block page_h1 %}Investigation Reports{% endblock %}
+{% block page_sub %}Generate and download case PDF reports{% endblock %}
+
+{% block content %}
+  <div class="panel"><div class="panel-body">
+    <table class="table">
+      <thead><tr><th>Case ID</th><th>Case Title</th><th>Report Status</th><th class="right">Actions</th></tr></thead>
+      <tbody>
+        {% for c in cases %}
+          <tr>
+            <td class="mono">{{ c.case_id }}</td>
+            <td>{{ c.case_title }}</td>
+            <td>{% if c.report_exists %}<span class="badge st closed">Generated</span>{% else %}<span class="badge st pending">Not Generated</span>{% endif %}</td>
+            <td class="right">
+              <form class="inline" method="POST" action="{{ url_for('reports_generate', case_id=c.case_id) }}">
+                <button class="btn-secondary" type="submit">Generate Report</button>
+              </form>
+              {% if c.report_exists %}
+                <a class="a" href="{{ url_for('reports_download', case_id=c.case_id) }}">Download PDF</a>
+              {% endif %}
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="4" class="empty">No cases available. Create a case first.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div></div>
+{% endblock %}

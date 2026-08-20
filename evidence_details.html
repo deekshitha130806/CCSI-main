@@ -1,0 +1,59 @@
+{% extends "_app_base.html" %}
+{% set page_title = "CCSI • Evidence Details" %}
+{% set active_nav = "evidence" %}
+{% set extra_css = ["css/cases.css", "css/forms.css"] %}
+{% set extra_js = ["js/evidence.js"] %}
+
+{% block page_h1 %}Evidence Details{% endblock %}
+{% block page_sub %}{{ evidence.evidence_id }}{% endblock %}
+
+{% block content %}
+  <div class="page-actions">
+    <form method="POST" action="{{ url_for('evidence_verify', evidence_id=evidence.evidence_id) }}"><button class="btn-primary" type="submit">Verify Integrity</button></form>
+    <a class="btn-secondary" href="{{ url_for('metadata_details', evidence_id=evidence.evidence_id) }}">View Metadata</a>
+    <a class="btn-secondary" href="{{ url_for('evidence_download', evidence_id=evidence.evidence_id) }}">Download Evidence</a>
+    {% if case %}<a class="btn-secondary" href="{{ url_for('case_details', case_id=case.case_id) }}">View Linked Case</a>{% endif %}
+    <a class="btn-ghost" href="{{ url_for('evidence_index') }}">Back to Evidence</a>
+  </div>
+
+  <div class="panel"><div class="panel-head"><div class="panel-title">General Information</div></div>
+    <div class="panel-body detail-grid">
+      <div class="detail-item"><div class="k">Evidence ID</div><div class="v mono">{{ evidence.evidence_id }}</div></div>
+      <div class="detail-item"><div class="k">Original File Name</div><div class="v">{{ evidence.original_filename }}</div></div>
+      <div class="detail-item"><div class="k">Evidence Type</div><div class="v">{{ evidence.evidence_type }}</div></div>
+      <div class="detail-item"><div class="k">Linked Case</div><div class="v mono">{{ evidence.case_id }}</div></div>
+      <div class="detail-item"><div class="k">File Extension</div><div class="v">{{ evidence.file_extension or '—' }}</div></div>
+      <div class="detail-item"><div class="k">MIME Type</div><div class="v">{{ evidence.mime_type or '—' }}</div></div>
+      <div class="detail-item"><div class="k">File Size</div><div class="v">{{ "{:,}".format(evidence.file_size) }} bytes</div></div>
+      <div class="detail-item"><div class="k">Uploaded By</div><div class="v">{{ evidence.uploaded_by }} ({{ evidence.uploaded_by_id }})</div></div>
+      <div class="detail-item"><div class="k">Upload Time</div><div class="v">{{ evidence.upload_time }}</div></div>
+      <div class="detail-item" style="grid-column:1/-1"><div class="k">Notes</div><div class="v">{{ evidence.notes or '—' }}</div></div>
+    </div>
+  </div>
+
+  <div class="panel"><div class="panel-head"><div class="panel-title">Forensic Hashes & Integrity</div>
+    <div class="panel-sub"><span class="badge integ {{ evidence.integrity_status|lower|replace(' ', '-') }}">{{ evidence.integrity_status }}</span></div></div>
+    <div class="panel-body">
+      <p><strong>MD5</strong></p>
+      <p class="hash-mono">Original: {{ evidence.original_md5 }} <button class="btn-ghost copy-hash" data-hash="{{ evidence.original_md5 }}">Copy</button></p>
+      <p class="hash-mono">Current: {{ evidence.current_md5_hash or '—' }}</p>
+      <p><strong>SHA-1</strong></p>
+      <p class="hash-mono">Original: {{ evidence.original_sha1 }} <button class="btn-ghost copy-hash" data-hash="{{ evidence.original_sha1 }}">Copy</button></p>
+      <p class="hash-mono">Current: {{ evidence.current_sha1_hash or '—' }}</p>
+      <p><strong>SHA-256</strong></p>
+      <p class="hash-mono">Original: {{ evidence.original_sha256 }} <button class="btn-ghost copy-hash" data-hash="{{ evidence.original_sha256 }}">Copy</button></p>
+      <p class="hash-mono">Current: {{ evidence.current_sha256_hash or '—' }}</p>
+      <p>Last Verified: {{ evidence.last_verified_at or 'Not verified' }}</p>
+    </div>
+  </div>
+
+  {% if analysis %}
+  <div class="panel"><div class="panel-head"><div class="panel-title">Rule-Based Risk Assessment</div></div>
+    <div class="panel-body">
+      <p>Score: <strong>{{ analysis.risk_score }}</strong> / 100 — Level: <strong>{{ analysis.risk_level }}</strong></p>
+      <p>{{ analysis.review_status }}</p>
+      <p>Indicators: {{ analysis.indicators or 'None' }}</p>
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}

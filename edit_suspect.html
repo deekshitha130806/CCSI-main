@@ -1,0 +1,30 @@
+{% extends "_app_base.html" %}
+{% set page_title = "CCSI • Edit Suspect" %}
+{% set active_nav = "suspects" %}
+{% set extra_css = ["css/cases.css", "css/forms.css"] %}
+
+{% block page_h1 %}Edit Suspect{% endblock %}
+{% block page_sub %}{{ suspect.suspect_id }}{% endblock %}
+
+{% block content %}
+  <div class="panel"><div class="panel-body">
+    <form class="form-grid" method="POST" action="{{ url_for('suspect_update', suspect_id=suspect.suspect_id) }}" enctype="multipart/form-data">
+      <div class="form-row"><label>Suspect ID</label><input value="{{ suspect.suspect_id }}" readonly /></div>
+      <div class="form-row">
+        <label>Linked Case *</label>
+        <select name="case_id" required>{% for c in cases %}<option value="{{ c.case_id }}" {% if c.case_id==suspect.case_id %}selected{% endif %}>{{ c.case_id }} — {{ c.case_title }}</option>{% endfor %}</select>
+      </div>
+      <div class="form-row"><label>Name *</label><input name="name" value="{{ suspect.name }}" required /></div>
+      <div class="form-row"><label>Age *</label><input name="age" type="number" value="{{ suspect.age }}" required /></div>
+      <div class="form-row"><label>Address *</label><textarea name="address" required>{{ suspect.address }}</textarea></div>
+      <div class="form-row"><label>Phone</label><input name="phone" value="{{ suspect.phone or '' }}" /></div>
+      <div class="form-row"><label>Email</label><input name="email" value="{{ suspect.email or '' }}" /></div>
+      <div class="form-row"><label>Crime History</label><textarea name="crime_history" rows="3">{{ suspect.crime_history or '' }}</textarea></div>
+      <div class="form-row"><label>Photograph (replace)</label><input type="file" name="photograph" accept=".jpg,.jpeg,.png,.webp" /></div>
+      <div class="form-actions">
+        <button class="btn-primary" type="submit">Update Suspect</button>
+        <a class="btn-ghost" href="{{ url_for('suspect_details', suspect_id=suspect.suspect_id) }}">Cancel</a>
+      </div>
+    </form>
+  </div></div>
+{% endblock %}

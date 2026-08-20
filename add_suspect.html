@@ -1,0 +1,33 @@
+{% extends "_app_base.html" %}
+{% set page_title = "CCSI • Add Suspect" %}
+{% set active_nav = "suspects" %}
+{% set extra_css = ["css/cases.css", "css/forms.css"] %}
+
+{% block page_h1 %}Add Suspect{% endblock %}
+{% block page_sub %}Link a suspect to an investigation case{% endblock %}
+
+{% block content %}
+  <div class="panel"><div class="panel-body">
+    <form class="form-grid" method="POST" action="{{ url_for('suspects_create') }}" enctype="multipart/form-data">
+      <div class="form-row"><label>Suspect ID</label><input name="suspect_id" value="{{ suspect_id }}" readonly /></div>
+      <div class="form-row">
+        <label>Linked Case *</label>
+        <select name="case_id" required>
+          <option value="">Select case</option>
+          {% for c in cases %}<option value="{{ c.case_id }}" {% if c.case_id==case_id_prefill %}selected{% endif %}>{{ c.case_id }} — {{ c.case_title }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-row"><label>Name *</label><input name="name" required /></div>
+      <div class="form-row"><label>Age *</label><input name="age" type="number" min="1" max="120" required /></div>
+      <div class="form-row"><label>Address *</label><textarea name="address" rows="2" required></textarea></div>
+      <div class="form-row"><label>Phone</label><input name="phone" /></div>
+      <div class="form-row"><label>Email</label><input name="email" type="email" /></div>
+      <div class="form-row"><label>Crime History</label><textarea name="crime_history" rows="3"></textarea></div>
+      <div class="form-row"><label>Photograph</label><input type="file" name="photograph" accept=".jpg,.jpeg,.png,.webp" /></div>
+      <div class="form-actions">
+        <button class="btn-primary" type="submit">Add Suspect</button>
+        <a class="btn-ghost" href="{{ url_for('suspects_index') }}">Cancel</a>
+      </div>
+    </form>
+  </div></div>
+{% endblock %}

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{{ page_title or "CCSI" }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}" />
+    {% if extra_css %}
+      {% for css_path in extra_css %}
+        <link rel="stylesheet" href="{{ url_for('static', filename=css_path) }}" />
+      {% endfor %}
+    {% endif %}
+    {% block head_extra %}{% endblock %}
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="side-brand">
+          <div class="side-mark">CCSI</div>
+          <div class="side-name">Cybercrime Scene Investigator</div>
+        </div>
+
+        <nav class="side-nav">
+          <a class="nav-item {% if active_nav=='dashboard' %}active{% endif %}" href="{{ url_for('dashboard') }}">
+            <span class="dot"></span><span>Dashboard</span>
+          </a>
+
+          <a class="nav-item {% if active_nav=='cases' %}active{% endif %}" href="{{ url_for('cases_index') }}">
+            <span class="dot"></span><span>Cases</span>
+          </a>
+
+          <a class="nav-item {% if active_nav=='suspects' %}active{% endif %}" href="{{ url_for('suspects_index') }}">
+            <span class="dot"></span><span>Suspects</span>
+          </a>
+
+          <a class="nav-item {% if active_nav=='evidence' %}active{% endif %}" href="{{ url_for('evidence_index') }}">
+            <span class="dot"></span><span>Evidence</span>
+          </a>
+
+          <a class="nav-item {% if active_nav=='analysis' %}active{% endif %}" href="{{ url_for('analysis_index') }}">
+            <span class="dot"></span><span>Analysis</span>
+          </a>
+
+          <a class="nav-item {% if active_nav=='custody' %}active{% endif %}" href="{{ url_for('custody_index') }}">
+            <span class="dot"></span><span>Chain of Custody</span>
+          </a>
+
+          <a class="nav-item {% if active_nav=='reports' %}active{% endif %}" href="{{ url_for('reports_index') }}">
+            <span class="dot"></span><span>Reports</span>
+          </a>
+
+          <a class="nav-item" href="{{ url_for('module_placeholder', name='settings') }}">
+            <span class="dot"></span><span>Settings</span>
+            <span class="soon">Next</span>
+          </a>
+
+          <div class="nav-sep"></div>
+
+          <a class="nav-item danger" href="{{ url_for('logout') }}">
+            <span class="dot danger-dot"></span><span>Logout</span>
+          </a>
+        </nav>
+
+        <div class="side-foot">
+          <div class="status">
+            <div class="status-label">Security</div>
+            <div class="status-value ok">Operational</div>
+          </div>
+        </div>
+      </aside>
+
+      <div class="main">
+        <header class="topbar">
+          <button class="icon-btn" id="toggleSidebar" aria-label="Toggle sidebar">
+            <span class="burger"></span>
+          </button>
+
+          <div class="title">
+            <div class="h1">{% block page_h1 %}CCSI{% endblock %}</div>
+            <div class="sub">{% block page_sub %}{% endblock %}</div>
+          </div>
+
+          <div class="top-actions">
+            <button class="icon-btn" aria-label="Search">
+              <span class="ico">⌕</span>
+            </button>
+            <button class="icon-btn" aria-label="Notifications">
+              <span class="ico">⎔</span>
+              <span class="badge" aria-hidden="true">3</span>
+            </button>
+            <div class="date" id="currentDate" data-now="{{ now_iso }}"></div>
+
+            <div class="profile">
+              <div class="avatar" aria-hidden="true"></div>
+              <div class="ptext">
+                <div class="pname">{{ investigator.investigator_name }}</div>
+                <div class="pmeta">
+                  <span class="pill">{{ investigator.rank }}</span>
+                  <span class="pill cyan">{{ investigator.investigator_id }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="toast-wrap" role="status" aria-live="polite">
+              {% for category, message in messages %}
+                <div class="toast {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <section class="content">
+          {% block content %}{% endblock %}
+        </section>
+      </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    {% if extra_js %}
+      {% for js_path in extra_js %}
+        <script src="{{ url_for('static', filename=js_path) }}"></script>
+      {% endfor %}
+    {% endif %}
+    {% block body_extra %}{% endblock %}
+  </body>
+</html>
+

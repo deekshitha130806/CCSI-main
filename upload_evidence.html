@@ -1,0 +1,40 @@
+{% extends "_app_base.html" %}
+{% set page_title = "CCSI • Upload Evidence" %}
+{% set active_nav = "evidence" %}
+{% set extra_css = ["css/cases.css", "css/forms.css"] %}
+{% set extra_js = ["js/evidence.js"] %}
+
+{% block page_h1 %}Upload Digital Evidence{% endblock %}
+{% block page_sub %}Secure forensic evidence intake{% endblock %}
+
+{% block content %}
+  <div class="panel"><div class="panel-body">
+    <form class="form-grid" method="POST" action="{{ url_for('evidence_upload') }}" enctype="multipart/form-data" id="uploadForm">
+      <div class="form-row"><label>Evidence ID</label><input name="evidence_id" value="{{ evidence_id }}" readonly /></div>
+      <div class="form-row">
+        <label>Linked Case *</label>
+        <select name="case_id" required>
+          <option value="">Select case</option>
+          {% for c in cases %}<option value="{{ c.case_id }}" {% if c.case_id==case_prefill %}selected{% endif %}>{{ c.case_id }} — {{ c.case_title }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Evidence Type *</label>
+        <select name="evidence_type" id="evidenceType" required>
+          <option value="">Select type</option>
+          {% for t in evidence_types %}<option value="{{ t }}">{{ t }}</option>{% endfor %}
+        </select>
+      </div>
+      <div class="form-row">
+        <label>Evidence File *</label>
+        <input type="file" name="evidence_file" id="evidenceFile" required />
+        <div id="fileInfo" style="font-size:12px;color:rgba(232,240,255,0.6);margin-top:6px"></div>
+      </div>
+      <div class="form-row"><label>Notes</label><textarea name="notes" rows="3"></textarea></div>
+      <div class="form-actions">
+        <button class="btn-primary" type="submit">Upload and Analyze</button>
+        <a class="btn-ghost" href="{{ url_for('evidence_index') }}">Cancel</a>
+      </div>
+    </form>
+  </div></div>
+{% endblock %}

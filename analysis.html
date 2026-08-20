@@ -1,0 +1,37 @@
+{% extends "_app_base.html" %}
+{% set page_title = "CCSI • Analysis" %}
+{% set active_nav = "analysis" %}
+{% set extra_css = ["css/cases.css", "css/forms.css"] %}
+
+{% block page_h1 %}Forensic Analysis{% endblock %}
+{% block page_sub %}Rule-based evidence analysis and integrity review{% endblock %}
+
+{% block content %}
+  <div class="panel"><div class="panel-body">
+    <table class="table">
+      <thead><tr><th>Evidence ID</th><th>File Name</th><th>Case ID</th><th>Type</th><th>SHA-256</th><th>Integrity</th><th>Metadata</th><th>Risk</th><th class="right">Actions</th></tr></thead>
+      <tbody>
+        {% for e in evidence_list %}
+          <tr>
+            <td class="mono">{{ e.evidence_id }}</td>
+            <td>{{ e.original_filename }}</td>
+            <td class="mono">{{ e.case_id }}</td>
+            <td>{{ e.evidence_type }}</td>
+            <td class="hash-mono">{{ shorten_hash(e.original_sha256) }}</td>
+            <td><span class="badge integ {{ e.integrity_status|lower|replace(' ', '-') }}">{{ e.integrity_status }}</span></td>
+            <td>{% if e.has_metadata %}Available{% else %}Pending{% endif %}</td>
+            <td>{% if e.analysis %}{{ e.analysis.risk_score }} ({{ e.analysis.risk_level }}){% else %}—{% endif %}</td>
+            <td class="right">
+              <form class="inline" method="POST" action="{{ url_for('analysis_run', evidence_id=e.evidence_id) }}"><button class="a" type="submit" style="background:none;border:none;cursor:pointer">Analyze</button></form>
+              <form class="inline" method="POST" action="{{ url_for('evidence_verify', evidence_id=e.evidence_id) }}"><button class="a" type="submit" style="background:none;border:none;cursor:pointer">Verify</button></form>
+              <a class="a" href="{{ url_for('metadata_details', evidence_id=e.evidence_id) }}">Metadata</a>
+              <a class="a" href="{{ url_for('evidence_details', evidence_id=e.evidence_id) }}">Evidence</a>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="9" class="empty">No evidence available for analysis.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div></div>
+{% endblock %}

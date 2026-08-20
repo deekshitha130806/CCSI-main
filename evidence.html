@@ -1,0 +1,57 @@
+{% extends "_app_base.html" %}
+{% set page_title = "CCSI • Digital Evidence" %}
+{% set active_nav = "evidence" %}
+{% set extra_css = ["css/cases.css", "css/forms.css"] %}
+{% set extra_js = ["js/evidence.js"] %}
+
+{% block page_h1 %}Digital Evidence Management{% endblock %}
+{% block page_sub %}Upload, verify, and manage forensic evidence{% endblock %}
+
+{% block content %}
+  <div class="page-actions">
+    <a class="btn-primary" href="{{ url_for('evidence_upload_form') }}">Upload Evidence</a>
+    <form method="POST" action="{{ url_for('evidence_verify_all') }}"><button class="btn-secondary" type="submit">Verify All Evidence</button></form>
+    <form class="filters" method="GET">
+      <input class="input" name="q" placeholder="Search evidence…" value="{{ q }}" />
+      <select class="select" name="case_id"><option value="">All Cases</option>{% for c in cases %}<option value="{{ c.case_id }}" {% if c.case_id==case_id %}selected{% endif %}>{{ c.case_id }}</option>{% endfor %}</select>
+      <select class="select" name="evidence_type"><option value="">All Types</option>{% for t in evidence_types %}<option value="{{ t }}" {% if t==evidence_type %}selected{% endif %}>{{ t }}</option>{% endfor %}</select>
+      <select class="select" name="integrity_status"><option value="">All Status</option>{% for s in integrity_statuses %}<option value="{{ s }}" {% if s==integrity_status %}selected{% endif %}>{{ s }}</option>{% endfor %}</select>
+      <button class="btn-secondary" type="submit">Filter</button>
+    </form>
+  </div>
+
+  <div class="cards cards-4">
+    <div class="card"><div class="k">Total Evidence</div><div class="v">{{ summary.total }}</div></div>
+    <div class="card"><div class="k">Verified (Authentic)</div><div class="v">{{ summary.verified }}</div><div class="tag ok">Secure</div></div>
+    <div class="card"><div class="k">Modified</div><div class="v">{{ summary.modified }}</div><div class="tag warn">Alert</div></div>
+    <div class="card"><div class="k">Pending Verification</div><div class="v">{{ summary.pending }}</div></div>
+  </div>
+
+  <div class="panel"><div class="panel-body">
+    <table class="table">
+      <thead><tr><th>Evidence ID</th><th>File Name</th><th>Case ID</th><th>Type</th><th>Size</th><th>Upload Time</th><th>SHA-256</th><th>Integrity</th><th class="right">Actions</th></tr></thead>
+      <tbody>
+        {% for e in evidence_list %}
+          <tr>
+            <td class="mono">{{ e.evidence_id }}</td>
+            <td>{{ e.original_filename }}</td>
+            <td class="mono">{{ e.case_id }}</td>
+            <td>{{ e.evidence_type }}</td>
+            <td>{{ "{:,}".format(e.file_size) }} B</td>
+            <td>{{ e.upload_time }}</td>
+            <td class="hash-mono">{{ shorten_hash(e.original_sha256) }} <button class="btn-ghost copy-hash" type="button" data-hash="{{ e.original_sha256 }}">Copy</button></td>
+            <td><span class="badge integ {{ e.integrity_status|lower|replace(' ', '-') }}">{{ e.integrity_status }}</span></td>
+            <td class="right">
+              <a class="a" href="{{ url_for('evidence_details', evidence_id=e.evidence_id) }}">View</a>
+              <form class="inline" method="POST" action="{{ url_for('evidence_verify', evidence_id=e.evidence_id) }}"><button class="a" type="submit" style="background:none;border:none;cursor:pointer">Verify</button></form>
+              <a class="a" href="{{ url_for('evidence_download', evidence_id=e.evidence_id) }}">Download</a>
+              <form class="inline" method="POST" action="{{ url_for('evidence_delete', evidence_id=e.evidence_id) }}"><button class="link-danger" type="submit" data-confirm="Are you sure you want to delete this evidence record and its stored file? This action cannot be undone.">Delete</button></form>
+            </td>
+          </tr>
+        {% else %}
+          <tr><td colspan="9" class="empty">No evidence uploaded yet.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div></div>
+{% endblock %}

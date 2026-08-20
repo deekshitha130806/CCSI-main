@@ -1,0 +1,118 @@
+{% extends "_app_base.html" %}
+
+{% set page_title = "CCSI • Case Management" %}
+{% set active_nav = "cases" %}
+{% set extra_css = ["css/cases.css"] %}
+{% set extra_js = ["js/cases.js"] %}
+
+{% block page_h1 %}Case Management{% endblock %}
+{% block page_sub %}Create, track, and manage investigations{% endblock %}
+
+{% block content %}
+  <div class="page-actions">
+    <a class="btn-primary" href="{{ url_for('cases_new') }}">Create New Case</a>
+
+    <form class="filters" method="GET" action="{{ url_for('cases_index') }}">
+      <input class="input" type="text" name="q" placeholder="Search cases…" value="{{ q }}" />
+
+      <select class="select" name="crime_type">
+        <option value="">All Crime Types</option>
+        {% for ct in crime_types %}
+          <option value="{{ ct }}" {% if ct==crime_type %}selected{% endif %}>{{ ct }}</option>
+        {% endfor %}
+      </select>
+
+      <select class="select" name="priority">
+        <option value="">All Priorities</option>
+        {% for p in priorities %}
+          <option value="{{ p }}" {% if p==priority %}selected{% endif %}>{{ p }}</option>
+        {% endfor %}
+      </select>
+
+      <select class="select" name="status">
+        <option value="">All Status</option>
+        {% for s in statuses %}
+          <option value="{{ s }}" {% if s==status %}selected{% endif %}>{{ s }}</option>
+        {% endfor %}
+      </select>
+
+      <button class="btn-secondary" type="submit">Search</button>
+      <a class="btn-ghost" href="{{ url_for('cases_index') }}">Reset</a>
+    </form>
+  </div>
+
+  <div class="cards cards-4">
+    <div class="card">
+      <div class="k">Total Cases</div>
+      <div class="v">{{ summary.total }}</div>
+      <div class="tag">All</div>
+    </div>
+    <div class="card">
+      <div class="k">Open Cases</div>
+      <div class="v">{{ summary.open }}</div>
+      <div class="tag warn">Active</div>
+    </div>
+    <div class="card">
+      <div class="k">Under Investigation</div>
+      <div class="v">{{ summary.under_investigation }}</div>
+      <div class="tag">Tracking</div>
+    </div>
+    <div class="card">
+      <div class="k">Closed Cases</div>
+      <div class="v">{{ summary.closed }}</div>
+      <div class="tag ok">Verified</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-head">
+      <div class="panel-title">Case List</div>
+      <div class="panel-sub">{{ cases|length }} results</div>
+    </div>
+    <div class="panel-body">
+      <div class="table-wrap">
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Case ID</th>
+              <th>Case Title</th>
+              <th>Crime Type</th>
+              <th>Investigation Officer</th>
+              <th>Date</th>
+              <th>Priority</th>
+              <th>Status</th>
+              <th class="right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for c in cases %}
+              <tr>
+                <td class="mono">{{ c.case_id }}</td>
+                <td>{{ c.case_title }}</td>
+                <td>{{ c.crime_type }}</td>
+                <td>{{ c.investigation_officer }}</td>
+                <td class="mono">{{ c.case_date }}</td>
+                <td><span class="badge pri {{ c.priority|lower|replace(' ', '-') }}">{{ c.priority }}</span></td>
+                <td><span class="badge st {{ c.status|lower|replace(' ', '-') }}">{{ c.status }}</span></td>
+                <td class="right">
+                  <a class="a" href="{{ url_for('case_details', case_id=c.case_id) }}">View</a>
+                  <a class="a" href="{{ url_for('case_edit', case_id=c.case_id) }}">Edit</a>
+                  <form class="inline" method="POST" action="{{ url_for('case_delete', case_id=c.case_id) }}">
+                    <button class="link-danger" type="submit" data-confirm="Are you sure you want to delete this case? This action cannot be undone.">
+                      Delete
+                    </button>
+                  </form>
+                </td>
+              </tr>
+            {% else %}
+              <tr>
+                <td colspan="8" class="empty">No cases found.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+

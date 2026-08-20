@@ -1,0 +1,35 @@
+{% extends "_app_base.html" %}
+{% set page_title = "CCSI • Chain of Custody" %}
+{% set active_nav = "custody" %}
+{% set extra_css = ["css/cases.css", "css/forms.css"] %}
+
+{% block page_h1 %}Chain of Custody{% endblock %}
+{% block page_sub %}Append-only forensic action history{% endblock %}
+
+{% block content %}
+  <form class="filters" method="GET">
+    <input class="input" name="q" placeholder="Search details…" value="{{ q }}" />
+    <select class="select" name="case_id"><option value="">All Cases</option>{% for c in cases %}<option value="{{ c.case_id }}" {% if c.case_id==case_id %}selected{% endif %}>{{ c.case_id }}</option>{% endfor %}</select>
+    <input class="input" name="evidence_id" placeholder="Evidence ID" value="{{ evidence_id }}" />
+    <input class="input" name="action" placeholder="Action" value="{{ action }}" />
+    <button class="btn-secondary" type="submit">Filter</button>
+  </form>
+
+  <div class="panel"><div class="panel-body timeline">
+    {% for ev in events %}
+      <div class="timeline-item">
+        <div class="timeline-time">{{ ev.action_date }}</div>
+        <div>
+          <strong>{{ ev.action }}</strong><br />
+          Evidence: {{ ev.evidence_id or '—' }} | Case: {{ ev.case_id }}<br />
+          Investigator: {{ ev.performed_by }} ({{ ev.investigator_id }})<br />
+          {{ ev.details }}
+          {% if ev.previous_sha256 %}<br /><span class="hash-mono">Prev SHA-256: {{ ev.previous_sha256 }}</span>{% endif %}
+          {% if ev.current_sha256 %}<br /><span class="hash-mono">Curr SHA-256: {{ ev.current_sha256 }}</span>{% endif %}
+        </div>
+      </div>
+    {% else %}
+      <p class="empty">No chain of custody events recorded.</p>
+    {% endfor %}
+  </div></div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "_app_base.html" %}
+{% set page_title = "CCSI • Metadata Analysis" %}
+{% set active_nav = "analysis" %}
+{% set extra_css = ["css/cases.css", "css/forms.css"] %}
+
+{% block page_h1 %}Metadata Analysis{% endblock %}
+{% block page_sub %}{{ evidence.evidence_id }} — {{ evidence.original_filename }}{% endblock %}
+
+{% block content %}
+  <div class="page-actions">
+    <a class="btn-ghost" href="{{ url_for('evidence_details', evidence_id=evidence.evidence_id) }}">Back to Evidence</a>
+  </div>
+  {% if grouped_metadata %}
+    {% for category, items in grouped_metadata.items() %}
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">{{ category }}</div></div>
+        <div class="panel-body detail-grid">
+          {% for m in items %}
+            <div class="detail-item"><div class="k">{{ m.metadata_key }}</div><div class="v">{{ m.metadata_value }}</div></div>
+          {% endfor %}
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="panel"><div class="panel-body"><p class="empty">Metadata could not be fully extracted.</p></div></div>
+  {% endif %}
+{% endblock %}

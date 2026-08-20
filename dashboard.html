@@ -1,0 +1,122 @@
+{% extends "_app_base.html" %}
+
+{% set page_title = "CCSI • Dashboard" %}
+{% set active_nav = "dashboard" %}
+{% set extra_css = ["css/forms.css"] %}
+
+{% block page_h1 %}Dashboard{% endblock %}
+{% block page_sub %}Forensic overview and system posture{% endblock %}
+
+{% block content %}
+          <div class="cards">
+            <div class="card">
+              <div class="k">Total Cases</div>
+              <div class="v">{{ metrics.total_cases }}</div>
+              <div class="tag">All time</div>
+            </div>
+            <div class="card">
+              <div class="k">Open Cases</div>
+              <div class="v">{{ metrics.open_cases }}</div>
+              <div class="tag warn">Requires action</div>
+            </div>
+            <div class="card">
+              <div class="k">Closed Cases</div>
+              <div class="v">{{ metrics.closed_cases }}</div>
+              <div class="tag ok">Verified</div>
+            </div>
+            <div class="card">
+              <div class="k">Evidence Uploaded</div>
+              <div class="v">{{ metrics.evidence_uploaded }}</div>
+              <div class="tag">Stored</div>
+            </div>
+            <div class="card">
+              <div class="k">Pending Analysis</div>
+              <div class="v">{{ metrics.pending_analysis }}</div>
+              <div class="tag warn">Queue</div>
+            </div>
+          </div>
+
+          <script id="ccsi-chart-data" type="application/json">{{ chart_data|tojson }}</script>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Case Status</div>
+                <div class="panel-sub">Open • Closed • Pending</div>
+              </div>
+              <div class="panel-body chart-wrap">
+                <div id="caseStatusEmpty" class="chart-empty" hidden>No case data available</div>
+                <canvas id="caseStatusChart"></canvas>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Evidence Type Distribution</div>
+                <div class="panel-sub">Storage composition</div>
+              </div>
+              <div class="panel-body chart-wrap">
+                <div id="evidenceTypeEmpty" class="chart-empty" hidden>No evidence data available</div>
+                <canvas id="evidenceTypeChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-title">Monthly Cases</div>
+                <div class="panel-sub">Last six months</div>
+              </div>
+              <div class="panel-body chart-wrap">
+                <div id="monthlyCasesEmpty" class="chart-empty" hidden>No case data available</div>
+                <canvas id="monthlyCasesChart"></canvas>
+              </div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-head">
+                <div class="panel-title">System Security Status</div>
+                <div class="panel-sub">Operational readiness</div>
+              </div>
+              <div class="panel-body">
+                <div class="status-list">
+                  <div class="srow"><span>Database Status</span><span class="s ok">Secure</span></div>
+                  <div class="srow"><span>Evidence Storage</span><span class="s ok">Protected</span></div>
+                  <div class="srow"><span>Hash Engine</span><span class="s ok">Ready</span></div>
+                  <div class="srow"><span>System Status</span><span class="s ok">Operational</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel">
+            <div class="panel-head">
+              <div class="panel-title">Recent Investigation Activity</div>
+              <div class="panel-sub">Monitored events</div>
+            </div>
+            <div class="panel-body">
+              {% if activities and activities|length > 0 %}
+                <div class="activity">
+                  {% for a in activities %}
+                    <div class="activity-item">
+                      <div class="aico">⟡</div>
+                      <div>
+                        <div class="adesc">{{ a.description }}</div>
+                        <div class="ameta">{{ a.created_at }}</div>
+                      </div>
+                      <div class="astatus ok">Logged</div>
+                    </div>
+                  {% endfor %}
+                </div>
+              {% else %}
+                <div class="activity" id="activityList"></div>
+              {% endif %}
+            </div>
+          </div>
+{% endblock %}
+
+{% block body_extra %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script src="{{ url_for('static', filename='js/dashboard-charts.js') }}"></script>
+{% endblock %}

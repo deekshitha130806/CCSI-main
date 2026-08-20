@@ -1,0 +1,118 @@
+"""PDF investigation report generation."""
+
+import os
+from datetime import datetime, timezone
+
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import inch
+from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
+
+
+def generate_investigation_report(
+    output_path: str,
+    case: dict,
+    suspects: list,
+    evidence_list: list,
+    custody_events: list,
+    investigator: dict,
+) -> str:
+    os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    doc = SimpleDocTemplate(output_path, pagesize=A4, rightMargin=50, leftMargin=50, topMargin=50, bottomMargin=50)
+    styles = getSampleStyleSheet()
+    title_style = ParagraphStyle("Title", parent=styles["Heading1"], textColor=colors.HexColor("#1a3a5c"), spaceAfter=12)
+    h2 = ParagraphStyle("H2", parent=styles["Heading2"], textColor=colors.HexColor("#26e6ff"), spaceBefore=14, spaceAfter=8)
+    body = styles["Normal"]
+    story = []
+
+    now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+    story.append(Paragraph("Cybercrime Scene Investigator (CCSI)", title_style))
+    story.append(Paragraph("Investigation Report", styles["Heading2"]))
+    story.append(Paragraph(f"Case ID: {case.get('case_id', '')}", body))
+    story.append(Paragraph(f"Case Title: {case.get('case_title', '')}", body))
+    story.append(Paragraph(f"Report Generated: {now}", body))
+    story.append(Spacer(1, 0.3 * inch))
+
+    story.append(Paragraph("Case Details", h2))
+    case_rows = [
+        ["Field", "Value"],
+        ["Case ID", case.get("case_id", "")],
+        ["Case Title", case.get("case_title", "")],
+        ["Crime Type", case.get("crime_type", "")],
+        ["Investigation Officer", case.get("investigation_officer", "")],
+        ["Date", case.get("case_date", "")],
+        ["Location", case.get("location", "")],
+        ["Priority", case.get("priority", "")],
+        ["Status", case.get("status", "")],
+        ["Description", case.get("description", "")],
+    ]
+    t = Table(case_rows, colWidths=[1.8 * inch, 4.5 * inch])
+    t.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#081224")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+        ("FONTSIZE", (0, 0), (-1, -1), 9),
+    ]))
+    story.append(t)
+    story.append(Spacer(1, 0.2 * inch))
+
+    story.append(Paragraph("Suspects", h2))
+    if suspects:
+        for s in suspects:
+            story.append(Paragraph(f"{s.get('suspect_id', '')} — {s.get('name', '')}", body))
+            story.append(Paragraph(f"Age: {s.get('age', '')} | Phone: {s.get('phone') or 'N/A'} | Email: {s.get('email') or 'N/A'}", body))
+            story.append(Paragraph(f"Crime History: {s.get('crime_history') or 'None recorded'}", body))
+            story.append(Spacer(1, 0.1 * inch))
+    else:
+        story.append(Paragraph("No suspects linked to this case.", body))
+
+    story.append(Paragraph("Digital Evidence", h2))
+    if evidence_list:
+        ev_rows = [["Evidence ID", "File Name", "Type", "SHA-256", "Integrity"]]
+        for e in evidence_list:
+            sha = (e.get("original_sha256") or "")[:16] + "..."
+            ev_rows.append([
+                e.get("evidence_id", ""),
+                e.get("original_filename", ""),
+                e.get("evidence_type", ""),
+                sha,
+                e.get("integrity_status", ""),
+            ])
+        et = Table(ev_rows, colWidths=[1.2 * inch, 1.5 * inch, 1 * inch, 1.5 * inch, 1 * inch])
+        et.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#081224")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("FONTSIZE", (0, 0), (-1, -1), 8),
+        ]))
+        story.append(et)
+    else:
+        story.append(Paragraph("No digital evidence uploaded.", body))
+
+    story.append(Paragraph("Chain of Custody", h2))
+    if custody_events:
+        for ev in custody_events[:30]:
+            story.append(Paragraph(
+                f"{ev.get('action_date', '')} — {ev.get('action', '')} — {ev.get('evidence_id', '')} — {ev.get('details', '')}",
+                body,
+            ))
+    else:
+        story.append(Paragraph("No chain of custody events recorded.", body))
+
+    story.append(Spacer(1, 0.3 * inch))
+    story.append(Paragraph("Investigator Details", h2))
+    story.append(Paragraph(f"Name: {investigator.get('investigator_name', '')}", body))
+    story.append(Paragraph(f"ID: {investigator.get('investigator_id', '')}", body))
+    story.append(Paragraph(f"Department: {investigator.get('department', '')}", body))
+    story.append(Paragraph(f"Rank: {investigator.get('rank', '')}", body))
+    story.append(Spacer(1, 0.4 * inch))
+    story.append(Paragraph("Generated by Cybercrime Scene Investigator (CCSI)", body))
+    story.append(Paragraph(
+        "This report is generated from information recorded within the CCSI mini-project system.",
+        body,
+    ))
+
+    doc.build(story)
+    return output_path

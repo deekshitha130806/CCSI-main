@@ -1,0 +1,290 @@
+:root {
+  --bg0: #060a12;
+  --bg1: #081224;
+  --panel: rgba(10, 18, 34, 0.86);
+  --stroke: rgba(38, 230, 255, 0.22);
+  --stroke2: rgba(42, 118, 255, 0.2);
+  --cyan: #26e6ff;
+  --blue: #2a76ff;
+  --text: #e8f0ff;
+  --muted: rgba(232, 240, 255, 0.68);
+  --ok: #5be38a;
+  --warn: #ff4d4d;
+  --shadow: 0 24px 60px rgba(0, 0, 0, 0.55);
+  --radius: 16px;
+  --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue",
+    sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: var(--font);
+  color: var(--text);
+  background: radial-gradient(1200px 600px at 30% 10%, rgba(42, 118, 255, 0.18), transparent 55%),
+    radial-gradient(900px 500px at 70% 90%, rgba(38, 230, 255, 0.1), transparent 60%),
+    linear-gradient(180deg, var(--bg0), var(--bg1));
+  overflow: hidden;
+}
+
+.bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+}
+.grid {
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 64px 64px;
+  opacity: 0.22;
+  transform: translateZ(0);
+  animation: gridMove 14s linear infinite;
+}
+@keyframes gridMove {
+  0% {
+    background-position: 0 0, 0 0;
+  }
+  100% {
+    background-position: 160px 120px, 160px 120px;
+  }
+}
+
+#binaryCanvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.28;
+}
+
+.circuits {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(800px 400px at 15% 25%, rgba(38, 230, 255, 0.1), transparent 55%),
+    radial-gradient(650px 380px at 85% 75%, rgba(42, 118, 255, 0.1), transparent 60%),
+    linear-gradient(90deg, rgba(38, 230, 255, 0.08) 1px, transparent 1px),
+    linear-gradient(0deg, rgba(42, 118, 255, 0.06) 1px, transparent 1px);
+  background-size: auto, auto, 220px 220px, 220px 220px;
+  opacity: 0.55;
+  mask-image: radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0.2) 60%, transparent 78%);
+}
+
+.lock {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(38, 230, 255, 0.65);
+  border-radius: 3px;
+  transform: translate(-50%, -50%);
+  opacity: 0.3;
+  box-shadow: 0 0 24px rgba(38, 230, 255, 0.25);
+  animation: lockPulse 3.2s ease-in-out infinite;
+}
+.lock::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -10px;
+  width: 12px;
+  height: 10px;
+  border: 2px solid rgba(38, 230, 255, 0.55);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  transform: translateX(-50%);
+}
+@keyframes lockPulse {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 0.22;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.12);
+    opacity: 0.38;
+  }
+}
+
+.layout {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: 28px 16px;
+}
+
+.login-card {
+  width: min(520px, 96vw);
+  background: var(--panel);
+  border: 1px solid rgba(38, 230, 255, 0.18);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+  padding: 22px 22px 18px;
+}
+
+.brand {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.logo {
+  width: 64px;
+  height: 64px;
+  border-radius: 14px;
+  border: 1px solid rgba(38, 230, 255, 0.2);
+  background: radial-gradient(circle at 30% 20%, rgba(38, 230, 255, 0.12), transparent 60%),
+    radial-gradient(circle at 70% 80%, rgba(42, 118, 255, 0.12), transparent 55%);
+  display: grid;
+  place-items: center;
+  padding: 8px;
+}
+
+.brand-short {
+  letter-spacing: 0.18em;
+  font-weight: 800;
+  color: var(--cyan);
+  font-size: 12px;
+}
+.brand-long {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.brand-sub {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+.alerts {
+  margin: 10px 0 12px;
+}
+.alert {
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 13px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.04);
+}
+.alert.error {
+  border-color: rgba(255, 77, 77, 0.35);
+  background: rgba(255, 77, 77, 0.08);
+}
+.alert.info {
+  border-color: rgba(38, 230, 255, 0.25);
+  background: rgba(38, 230, 255, 0.06);
+}
+
+.form {
+  display: grid;
+  gap: 12px;
+}
+.field span {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 6px;
+}
+.field input {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid rgba(38, 230, 255, 0.18);
+  padding: 12px 12px;
+  background: rgba(0, 0, 0, 0.22);
+  color: var(--text);
+  outline: none;
+}
+.field input:focus {
+  border-color: rgba(38, 230, 255, 0.42);
+  box-shadow: 0 0 0 4px rgba(38, 230, 255, 0.08);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.check {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+.check input {
+  accent-color: var(--cyan);
+}
+.link {
+  color: rgba(38, 230, 255, 0.85);
+  text-decoration: none;
+  font-size: 13px;
+}
+.link:hover {
+  text-decoration: underline;
+}
+
+.btn {
+  border: 1px solid rgba(38, 230, 255, 0.25);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(38, 230, 255, 0.18), rgba(42, 118, 255, 0.16));
+  color: var(--text);
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, border-color 120ms ease;
+}
+.btn:hover {
+  transform: translateY(-1px);
+  border-color: rgba(38, 230, 255, 0.42);
+}
+.btn:active {
+  transform: translateY(0px);
+}
+
+.security {
+  margin-top: 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: 12px;
+}
+.security-title {
+  font-weight: 700;
+  font-size: 13px;
+}
+.security-msg {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.footer {
+  margin-top: 14px;
+  color: rgba(232, 240, 255, 0.55);
+  font-size: 12px;
+  display: flex;
+  justify-content: space-between;
+}
+@media (max-width: 520px) {
+  .brand {
+    grid-template-columns: 56px 1fr;
+  }
+  .logo {
+    width: 56px;
+    height: 56px;
+  }
+}
+
